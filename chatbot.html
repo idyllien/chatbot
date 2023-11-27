@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript Chatbot</title>
+    <style>
+        #chatbox {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox"></div>
+    <input id="userInput" type="text" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        let pairs = [
+            ['hi', 'Hello!'],
+            ['how are you?', 'I\'m fine, thank you!'],
+            // ... other predefined pairs
+        ];
+
+        function addPair(pattern, response) {
+            pairs.push([pattern, response]);
+            displayMessage("Bot: Thanks, I've learned!");
+        }
+
+        function getBotResponse(userInput) {
+            for (const [pattern, response] of pairs) {
+                const regex = new RegExp(pattern, 'i');
+                if (regex.test(userInput)) {
+                    return response;
+                }
+            }
+            return "I'm not sure about that. Would you like to teach me?";
+        }
+
+        function displayMessage(message) {
+            const chatbox = document.getElementById('chatbox');
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput').value.trim();
+            if (userInput !== '') {
+                displayMessage("You: " + userInput);
+                const botResponse = getBotResponse(userInput);
+                displayMessage("Bot: " + botResponse);
+                if (botResponse === "I'm not sure about that. Would you like to teach me?") {
+                    const teachConfirmation = confirm("Would you like to teach me?");
+                    if (teachConfirmation) {
+                        const newPattern = prompt("Enter the pattern:");
+                        const newResponse = prompt("Enter the response:");
+                        if (newPattern && newResponse) {
+                            addPair(newPattern.toLowerCase(), newResponse);
+                        } else {
+                            displayMessage("Bot: Teaching canceled. Please provide both pattern and response.");
+                        }
+                    }
+                }
+                document.getElementById('userInput').value = ''; // Clear input field
+            }
+        }
+    </script>
+</body>
+</html>
